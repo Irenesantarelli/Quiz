@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+  <!--
+        QUIZ GAME!
+
+        REGOLE:
+        / Il giocatore deve indovinare il maggior numero di risposte possibile
+        / Ogni risposta corretta vale 1 punto
+        / Le domande possono essere a risposta multipla oppure vero/falso
+        / Alla fine della partita il giocatore deve sapere il proprio risultato
+
+        DOMANDE:
+        / Puoi prenderle da questo URL (http://bit.ly/strive_QUIZZ) oppure puoi creare le tue
+        / Possono essere a risposta multipla oppure vero/falso
+
+        SUGGERIMENTI PER L'ESERCIZIO:
+        / Memorizza il punteggio totale dell'utente in una variabile
+        / Memorizza in una variabile questionNumber a quale domanda il giocatore sta rispondendo
+        / Quando questionNumber diventa maggiore del numero totale delle domande, la partita è finita e devi mostrare il punteggio
+        / Memorizza le domande in una variabile (oppure recuperale direttamente dall'URL usando AJAX, se già sai come farlo!)
+        / Comincia con i requisiti base, se ti avanza tempo prosegui con gli EXTRA
+        / Verifica tramite la console che il flow dell'applicazione sia corretto, in modo che non ci siano problemi nell'esecuzione
+
+        EXTRA:
+        / Mostra immediatamente al giocatore una volta selezionata la risposta se ha fatto punto oppure no
+        / Presenta le domande al giocatore una alla volta, invece di mostrargliele tutte insieme
+        / Permetti al giocatore di selezionare il livello di difficoltà e il numero delle risposte (puoi recuperarle da qui https://opentdb.com/api.php?amount=10&category=18&difficulty=easy modificando nell'URL i parametri "amount")
+          e "difficulty"
+    --><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+  </head>
+  <body cz-shortcut-listen="true">
+    <header>
+      <h1>Titolo Pagina</h1>
+
+    </header>
+
+    <main id="mainContent">
+      
+
+    </main>
+
+    <button id="invio" onclick="calcolaRisultato()">Invio risultato</button>
+    <button id="reset">Reset</button>
+
+    <footer>
+
+      <p>Irene Santarelli</p>
+
+    </footer>
+
+    <script>
+      const questions = [
+        {
+          category: 'Science: Computers',
+          type: 'multiple',
+          difficulty: 'easy',
+          question: 'What does CPU stand for?',
+          correct_answer: 'Central Processing Unit',
+          incorrect_answers: [
+            'Central Process Unit',
+            'Computer Personal Unit',
+            'Central Processor Unit',
+          ],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'multiple',
+          difficulty: 'easy',
+          question:
+            'In the programming language Java, which of these keywords would you put on a variable to make sure it doesn&#039;t get modified?',
+          correct_answer: 'Final',
+          incorrect_answers: ['Static', 'Private', 'Public'],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'boolean',
+          difficulty: 'easy',
+          question: 'The logo for Snapchat is a Bell.',
+          correct_answer: 'False',
+          incorrect_answers: ['True'],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'boolean',
+          difficulty: 'easy',
+          question:
+            'Pointers were not used in the original C programming language; they were added later on in C++.',
+          correct_answer: 'False',
+          incorrect_answers: ['True'],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'multiple',
+          difficulty: 'easy',
+          question:
+            'What is the most preferred image format used for logos in the Wikimedia database?',
+          correct_answer: '.svg',
+          incorrect_answers: ['.png', '.jpeg', '.gif'],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'multiple',
+          difficulty: 'easy',
+          question: 'In web design, what does CSS stand for?',
+          correct_answer: 'Cascading Style Sheet',
+          incorrect_answers: [
+            'Counter Strike: Source',
+            'Corrective Style Sheet',
+            'Computer Style Sheet',
+          ],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'multiple',
+          difficulty: 'easy',
+          question:
+            'What is the code name for the mobile operating system Android 7.0?',
+          correct_answer: 'Nougat',
+          incorrect_answers: [
+            'Ice Cream Sandwich',
+            'Jelly Bean',
+            'Marshmallow',
+          ],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'multiple',
+          difficulty: 'easy',
+          question: 'On Twitter, what is the character limit for a Tweet?',
+          correct_answer: '140',
+          incorrect_answers: ['120', '160', '100'],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'boolean',
+          difficulty: 'easy',
+          question: 'Linux was first created as an alternative to Windows XP.',
+          correct_answer: 'False',
+          incorrect_answers: ['True'],
+        },
+        {
+          category: 'Science: Computers',
+          type: 'multiple',
+          difficulty: 'easy',
+          question:
+            'Which programming language shares its name with an island in Indonesia?',
+          correct_answer: 'Java',
+          incorrect_answers: ['Python', 'C', 'Jakarta'],
+        },
+      ]
+
+      window.onload = function () {
+
+        let mainQuestion = document.getElementById('mainContent')
+
+        for(let i = 0; i < questions.length; i++){
+          const question = questions[i]
+          //console.log(question);
+
+          let divQuestion = document.createElement('div');
+          divQuestion.classList.add('questionContainer');
+
+          let labelQuestion = document.createElement('label');
+          labelQuestion.classList.add('questionTitle');
+
+
+          //let inputquestion = document.createElement('input');
+          //inputquestion.classList.add('answer');
+
+
+
+          labelQuestion.innerText = question.question;
+
+          let invio = document.createElement('br');
+          divQuestion.append(labelQuestion, invio);
+
+          let completeAnswer = [];
+          completeAnswer.push(question.correct_answer); //risposte corrette
+          
+          for(let answer of question.incorrect_answers){
+            completeAnswer.push(answer); //risposte errate
+          }
+          //console.log(completeAnswer);
+
+          for(let j = 0; j < completeAnswer.length; j++){ // conta le risposte
+            let inputAnswerRadio = document.createElement('input'); // name id type
+            inputAnswerRadio.name = 'question' + i;
+            inputAnswerRadio.type = 'radio';
+            inputAnswerRadio.id = 'question' + i + j;
+            inputAnswerRadio.value = completeAnswer[j];
+            inputAnswerRadio.required = true;
+
+            let answerLabel = document.createElement('label');
+            answerLabel.innerText = completeAnswer[j];
+            answerLabel.setAttribute('for', inputAnswerRadio.id);
+
+            divQuestion.append(inputAnswerRadio, answerLabel);
+
+          }
+
+          let hrElemento = document.createElement('hr');
+          divQuestion.appendChild(hrElemento);
+          mainQuestion.appendChild(divQuestion);
+        }
+      }
+      
+
+    function calcolaRisultato(){
+        let risposte = [];
+        let i = 0;
+        while(questionRadio = document.getElementsByName('question' + i)){
+          if(questionRadio.length == 0){
+            break;
+          }
+          //console.log(questionRadio);
+          for(let k = 0; k < questionRadio.length; k++){
+            if(questionRadio[k].checked){
+              risposte.push(questionRadio[k].value); //inserisco la rix dell'utente nell'array
+            }
+          }
+          i++;
+        }
+        //console.log(risposte);
+
+      }
+
+      let contatore = 0;
+    for (let i = 0; i < risposte.length; i++) {
+        if (risposte[i] == questions[i].correct_answer) {
+            contatore++;
+        }
+    }
+    //console.log(contatore);
+    if (risposte.length == questions.length) { //per risultato devono essere inviate tutte le risposte
+        let punteggio = document.getElementById('punteggio');
+        punteggio.innerText = contatore;
+        document.getElementById('output').style.display = 'inherit'; //mostra il contatore all'invio del quiz non si salva in variabile
+        //document.getElementById('invio').disabled = true; //disabilita invio
+        abilitaDisabilitaRadio();
+    }
+    
+    function abilitaDisabilitaRadio(disabilita = true) {
+    let i = 0;
+    document.getElementById('invio').disabled = disabilita; //la funzione disabilita invio
+    while (questionRadio = document.getElementsByName('question' + i)) {
+        if (questionRadio.length == 0) {
+            break;
+        }
+        for (let k = 0; k < questionRadio.length; k++) {
+            questionRadio[k].disabled = disabilita;
+        }
+        i++; //incrementa l'indice nel while
+    }
+}
+
+    function resetQuiz() {
+    document.getElementById('output').style.display = 'none';
+    abilitaDisabilitaRadio(false); //riabilita i bottoni
+    //document.getElementById('invio').disabled = false;
+    let i = 0;
+    while (questionRadio = document.getElementsByName('question' + i)) {
+        if (questionRadio.length == 0) {
+            break;
+        }
+        for (let k = 0; k < questionRadio.length; k++) {
+            questionRadio[k].checked = false;
+        }
+        i++; //incrementa l'indice nel while
+    }
+}
+    
+
+      // Come calcolare il punteggio? Puoi farlo in 2 modi:
+      // Se stai mostrando al giocatore tutte le domande in un colpo solo, seleziona tutti i radio buttons e controlla se la risposta selezionata
+      // è quella corretta.
+      // Se stai mostrando al giocatore le domande una alla volta, basta aggiungere o no 1 punto ogni volta che viene selezionata una risposta.
+       // ANCORA SUGGERIMENTI :)
+        // Se stai mostrando al giocatore tutte le domande in un colpo solo:
+        // Per ogni domanda, crea un elemento contenitore; poi crea un radio button (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio)
+        // con, come opzioni, sia la risposta corretta che quella/e non corretta/e. (puoi utilizzare google per capire come recuperare il valore di un
+        // radio button per il punteggio finale)
+        //
+        // Se stai mostrando al giocatore le domande una alla volta:
+        // All'inizio mostra la prima domanda con il testo i i radio buttons. Quando il giocatore seleziona una risposta, prendi la domanda
+        // successiva dall'elenco e rimpiazza la domanda vecchia, salvando la risposta selezionata in una variabile.
+      
+    </script>
+  </body>
+</html>
